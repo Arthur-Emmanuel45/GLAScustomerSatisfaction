@@ -2,6 +2,7 @@ import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomeComponent from './HomeComponent/HomeComponent';
 import Questionnaires from './QuestionnairesComponent/Questionnaires';
+import ThankYou from './ThankYouComponent/ThankYou';
 
 function App() {
   return (
@@ -10,8 +11,9 @@ function App() {
           <Routes>
             <Route path="/" element={<HomeComponent />} />
             <Route path="/questions" element={<Questionnaires />} />
+            <Route path="/thankYou" element={<ThankYou />} />
           </Routes>
-      </Router>    
+      </Router>
     </div>
   );
 }

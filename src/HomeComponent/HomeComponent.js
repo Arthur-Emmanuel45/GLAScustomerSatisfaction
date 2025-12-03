@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './HomeComponent.css';
 import { useNavigate } from "react-router-dom";
+import { speakText } from '../utils/speech';
 
 
 const HomeComponent = () => {
@@ -9,6 +10,10 @@ const HomeComponent = () => {
     const handleStart = () => {
         navigate("/questions"); // navigate to the questionnaire page
     };
+
+    useEffect(() => {
+        speakText("Welcome to Ghana Land Administration Customer Satisfaction Survey. Your feedback is valuable and will help us improve our services. This survey will take approximately 2-5 minutes to complete. We appreciate your generous support and contribution. Press “Start Now” to begin the survey.");
+    })
 
     return (
         <div className='home'>

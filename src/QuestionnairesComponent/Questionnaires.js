@@ -1,18 +1,25 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import StarRating from '../StarRatingComponent/StarRating';
 import './Questionnaires.css';
+import { submitSurvey } from "../api/surveyApi";
+import { useNavigate } from "react-router-dom";
+import { speakText } from '../utils/speech';
 
 const Questionnaires = () => {
     const [currentSection, setCurrentSection] = useState(0); // track which section you're on
+    const [language, setLanguage] = useState("en");
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         category: "",
         otherCategory: "",
         locality: "",
         municipality: "",
         gender: "",
+        ratings: {},
         overall_satisfaction: "",
         recommendation: "",
     })
+
     //Define heading for the questions
     const ratingSectionHeadings = [
         "Transparency",
@@ -24,32 +31,61 @@ const Questionnaires = () => {
     // Define questions grouped by sections
     const ratingSections = [
         [
-            { id: 5, text: "The standard service charges offered at the CSAU are clearly published and known to clients." },
-            { id: 6, text: "Payments made at the CSAU reflect standardized and official charges" },
-            { id: 7, text: "Receipts are provided for all payments made at the CSAU." },
-            { id: 8, text: "The CSAU provides regular updates on the progress of services requested (e.g., via call, text, or social media)." },
-            { id: 9, text: "The CSAU meets the timelines communicated for service delivery." },
+            { id: 'T1', text: "The standard service charges offered at the CSAU are clearly published and known to clients." },
+            { id: 'T2', text: "Payments made at the CSAU reflect standardized and official charges" },
+            { id: 'T3', text: "Receipts are provided for all payments made at the CSAU." },
+            { id: 'T4', text: "The CSAU provides regular updates on the progress of services requested (e.g., via call, text, or social media)." },
+            { id: 'T5', text: "The CSAU meets the timelines communicated for service delivery." },
         ],
 
         [
-            { id: 10, text: "How would you rate the affordability of the fees associated with document processing?" },
-            { id: 11, text: "How satisfactory are the ongoing operational costs associated with the system (e.g., maintenance, updates, and support)?" },
-            { id: 12, text: "How clear are the cost structures for the services provided by the land administration system?" },
+            { id: 'CO1', text: "How would you rate the affordability of the fees associated with document processing?" },
+            { id: 'CO2', text: "How satisfactory are the ongoing operational costs associated with the system (e.g., maintenance, updates, and support)?" },
+            { id: 'CO3', text: "How clear are the cost structures for the services provided by the land administration system?" },
         ],
 
         [
-            { id: 13, text: "Do you feel that the quality of service justifies the costs involved?" },
-            { id: 14, text: "How would you rate the overall value for money of the services provided by CSAU?" },
+            { id: 'VM1', text: "Do you feel that the quality of service justifies the costs involved?" },
+            { id: 'VM2', text: "How would you rate the overall value for money of the services provided by CSAU?" },
         ],
 
         [
-            { id: 15, text: "How would you evaluate the availability and reliability of the staff at CSAU for service delivery" },
-            { id: 16, text: "From your observation, how would you rate the responsiveness of service providers to serve the customers?" },
-            { id: 17, text: "How would you reate the speed of service on turn-around time?" },
-            { id: 18, text: "How would you rate the level of accuracy, quality on prepared documents deliverd by the CSAU" },
-            { id: 19, text: "How would you rate the service delivered by the CSAU in terms of value for money?" },
+            { id: 'SD1', text: "How would you evaluate the availability and reliability of the staff at CSAU for service delivery" },
+            { id: 'SD2', text: "From your observation, how would you rate the responsiveness of service providers to serve the customers?" },
+            { id: 'SD3', text: "How would you reate the speed of service on turn-around time?" },
+            { id: 'SD4', text: "How would you rate the level of accuracy, quality on prepared documents deliverd by the CSAU" },
+            { id: 'SD5', text: "How would you rate the service delivered by the CSAU in terms of value for money?" },
         ],
     ]
+    
+    // Speak automatically when a new section loads
+    useEffect(() => {
+        if (currentSection === 0) {
+            speakText("Please provide your demographic information.", language);
+            return;
+        }
+        
+        if (currentSection >= 1 && currentSection <= 4) {
+            const heading = ratingSectionHeadings[currentSection - 1];
+            const prehab = "To what extent do you rate the following attitudinal statement";
+            const firstQuestion = ratingSections[currentSection - 1][0].text;
+            speakText(heading, language);
+
+            setTimeout(() => {
+                speakText(prehab, language);
+            }, 1200)
+
+            setTimeout(() => {
+                speakText(firstQuestion, language);
+            }, 5400)
+        }
+        
+        if (currentSection === 5) {
+            speakText("What is your overall customer satisfaction services at the CSAU?.", language);
+        } else if (currentSection === 6) {
+            speakText("What would you recommend for imporving services at the CSAU?.", language);
+        }
+    }, [currentSection, language]);
 
     // handle demographic text or radio input
     const handleInputChange = (e) => {
@@ -63,30 +99,77 @@ const Questionnaires = () => {
         ...prev,
         ratings: { ...prev.ratings, [id]: rating },
         }));
+
+        // Play next question automatically
+        const sectionIndex = currentSection - 1;
+        if (sectionIndex < 0 || sectionIndex >= ratingSections.length){
+            return;
+        }
+        const currentIndex = ratingSections[sectionIndex].findIndex(q => q.id === id);
+        const nextQuestion = ratingSections[sectionIndex][currentIndex + 1];
+
+        if (nextQuestion) {
+            speakText(nextQuestion.text, language);
+        } else {
+            speakText("Please click Next to proceed to the next section.", language);
+        }
     };
 
-
     const handleNext = () => {
-        if (currentSection < 5) setCurrentSection(currentSection + 1);
+        // Prevent moving forward unless section complete
+        if (currentSection >= 1 && currentSection <= 4) {
+            const unanswered = ratingSections[currentSection - 1].filter(
+                (q) => !formData.ratings[q.id]
+            );
+            if (unanswered.length > 0) {
+                speakText("Please answer all questions before proceeding", language);
+                alert("Please answer all questions before proceeding.");
+                return;
+            }
+        }
+
+
+        if (currentSection === 0) {
+            if (!formData.category || !formData.locality || !formData.municipality || !formData.gender) {
+                speakText("Plase complete all demographic fields.", language)
+                alert("Please complete all demographic fields.");
+                return;
+            }
+        }
+        if (currentSection < 6) setCurrentSection(currentSection + 1);
     };
 
     const handlePrev = () => {
         if (currentSection > 0) setCurrentSection(currentSection - 1);
     };
 
-    const handleSubmit = () => {
-        alert("Your responses:\n" + JSON.stringify(formData, null, 2));
+    const handleSubmit = async () => {
+        try {
+            const response = await submitSurvey(formData);
+            alert("Survey submitted successfully!");
+            console.log("Response saved:", response);
+            navigate("/thankYou");
+        } catch (error) {
+            console.error("Submission failed:", error.response?.data || error.message);
+            alert("Failed to submit survey. Please try again.");
+        }
     };
+
 
     return (
         <div className='question_container'>
             {currentSection === 0 && (
                 <div className='section_1'>
-                    {/* <h2>{currentSection === 0
-                        ? "Section 1: Demographic Information"
-                        : `Section ${currentSection + 1}: Questionnaire`}
-                    </h2> */}
                     <h2>Demographic Information</h2>
+                    {/* Language Selector
+                    <label>Select Language for Voice:</label>
+                    <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+                        <option value="en">English</option>
+                        <option value="tw">Twi</option>
+                        <option value="ee">Ewe</option>
+                        <option value="gaa">Ga</option>
+                    </select> */}
+
                     <div className="screener">
                         <label>Category of CSAU user?</label>
                         <div>
@@ -165,12 +248,13 @@ const Questionnaires = () => {
                     </div>
                 </div>
             )}
-            {/* Sections 2 & 3 — Rating Questions */}
-            {currentSection >= 1 && currentSection <= 3  && (
+            {/* Sections  Rating Questions */}
+            {currentSection >= 1 && currentSection <= 4  && (
                 <div>
                     <h2>
                         {ratingSectionHeadings[currentSection - 1]}
                     </h2>
+                    <p className='question_statement'>To what extent do you rate the following attitudinal statement?</p>
                     {
                         ratingSections[currentSection - 1].map((q) => (
                             <StarRating
@@ -183,7 +267,7 @@ const Questionnaires = () => {
                 </div>
             )}
 
-            {currentSection === 4 && (
+            {currentSection === 5 && (
                 <div className='section_2'>
                     <h2>Overall Customer Satisfaction</h2>
                     <div className='os'>
@@ -198,7 +282,7 @@ const Questionnaires = () => {
                 </div>
             )}
 
-            {currentSection === 5 && (
+            {currentSection === 6 && (
                 <div className='section_3'>
                     <h2>Recommendations</h2>
                     <div className='recommend'>
@@ -224,7 +308,7 @@ const Questionnaires = () => {
                     </button>
                 )}
 
-                {currentSection < 5 ? (
+                {currentSection < 6 ? (
                 <button
                     onClick={handleNext}
                     className="all_buttons nxt_button"
@@ -233,6 +317,7 @@ const Questionnaires = () => {
                 </button>
                 ) : (
                 <button
+                    type="submit"
                     onClick={handleSubmit}
                     className="all_buttons submit_button"
                 >

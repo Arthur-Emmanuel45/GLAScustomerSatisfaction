@@ -23,6 +23,13 @@ h2 {
     font-size: 1.3em;
 }
 
+.question_statement {
+    font-style:italic;
+    font-weight: 900;
+    font-size: 18px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 .other_input {
     font-size: 15px;
 }

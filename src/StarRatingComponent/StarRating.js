@@ -2,9 +2,20 @@ import React, {useState} from 'react';
 import { FaStar } from "react-icons/fa";
 import './StarRating.css';
 
-const StarRating = ({question, onChange}) => {
+const StarRating = ({question, onChange, language="en"}) => {
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(null);
+
+    // Automatically read the question when it appears
+    // useEffect(() => {
+    //     speakText(question, language);
+    // }, [question, language]);
+
+    const handleRating = (num) => {
+        setRating(num);
+        if (typeof onChange === "function") onChange(num);   // send rating back to parent
+    };
+
     return (
         <div className='rating_container'>
             <p>{question}</p>
@@ -17,10 +28,7 @@ const StarRating = ({question, onChange}) => {
                         className="rating_transition"
                         onMouseEnter={() => setHover(num)}
                         onMouseLeave={() => setHover(null)}
-                        onClick={() => {
-                            setRating(num);
-                            onChange(num);
-                        }}
+                        onClick={() => handleRating(num)}
                     />
                 ))}
             </div>        

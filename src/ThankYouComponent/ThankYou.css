@@ -1,0 +1,15 @@
+.thank_you_container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('https://images.pexels.com/photos/113338/pexels-photo-113338.jpeg');
+    background-position: center;
+    background-size: cover;
+}
+
+h3 {
+    font-size: 2em;
+    margin:0;
+}
