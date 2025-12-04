@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/GLAScustomerSatisfaction/static/css/main.b3e78142.css",
-    "main.js": "/GLAScustomerSatisfaction/static/js/main.8ea41730.js",
+    "main.js": "/GLAScustomerSatisfaction/static/js/main.56e8fb22.js",
     "static/js/453.7aac6dcf.chunk.js": "/GLAScustomerSatisfaction/static/js/453.7aac6dcf.chunk.js",
     "index.html": "/GLAScustomerSatisfaction/index.html",
     "main.b3e78142.css.map": "/GLAScustomerSatisfaction/static/css/main.b3e78142.css.map",
-    "main.8ea41730.js.map": "/GLAScustomerSatisfaction/static/js/main.8ea41730.js.map",
+    "main.56e8fb22.js.map": "/GLAScustomerSatisfaction/static/js/main.56e8fb22.js.map",
     "453.7aac6dcf.chunk.js.map": "/GLAScustomerSatisfaction/static/js/453.7aac6dcf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b3e78142.css",
-    "static/js/main.8ea41730.js"
+    "static/js/main.56e8fb22.js"
   ]
 }
