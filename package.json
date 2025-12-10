@@ -2,7 +2,6 @@
   "name": "cs_las",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Arthur-Emmanuel45.github.io/GLAScustomerSatisfaction",
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.0",
@@ -46,5 +45,6 @@
   },
   "devDependencies": {
     "gh-pages": "^6.3.0"
-  }
+  },
+  "homepage": "https://Arthur-Emmanuel45.github.io/GLAScustomerSatisfaction"
 }

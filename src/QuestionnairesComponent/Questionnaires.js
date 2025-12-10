@@ -146,8 +146,8 @@ const Questionnaires = () => {
     const handleSubmit = async () => {
         try {
             const response = await submitSurvey(formData);
-            alert("Survey submitted successfully!");
-            console.log("Response saved:", response);
+            // alert("Survey submitted successfully!");
+            // console.log("Response saved:", response);
             navigate("/thankYou");
         } catch (error) {
             console.error("Submission failed:", error.response?.data || error.message);
@@ -161,14 +161,6 @@ const Questionnaires = () => {
             {currentSection === 0 && (
                 <div className='section_1'>
                     <h2>Demographic Information</h2>
-                    {/* Language Selector
-                    <label>Select Language for Voice:</label>
-                    <select value={language} onChange={(e) => setLanguage(e.target.value)}>
-                        <option value="en">English</option>
-                        <option value="tw">Twi</option>
-                        <option value="ee">Ewe</option>
-                        <option value="gaa">Ga</option>
-                    </select> */}
 
                     <div className="screener">
                         <label>Category of CSAU user?</label>
